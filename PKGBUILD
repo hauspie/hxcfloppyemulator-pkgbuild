@@ -3,13 +3,14 @@
 # Maintainer: Michael Hauspie <mickeymtp@gmail.com>
 pkgname=hxcfloppyemulator
 pkgver=2.0.20.3
-pkgrel=1
+pkgrel=2
 epoch=
 pkgdesc="Software that drives the HxC Floppy USB emulator"
 arch=('any')
 url="http://hxc2001.com"
 license=('GPL')
 depends=('fltk>=1.3')
+install=$pkgname.install
 source=('svn://svn.code.sf.net/p/hxcfloppyemu/code/#revision=1100',
     'http://hxc2001.com/download/floppy_drive_emulator/HxC_Floppy_Emulator_Software_User_Manual_ENG.pdf'
 )
@@ -39,6 +40,10 @@ package() {
 	cp "$srcdir/code/HxCFloppyEmulator/build/libhxcfe.so" "$pkgdir/usr/lib"
 	cp "$srcdir/code/HxCFloppyEmulator/build/libusbhxcfe.so" "$pkgdir/usr/lib"
 	cp "$srcdir/HxC_Floppy_Emulator_Software_User_Manual_ENG.pdf" "$pkgdir/usr/share/doc/$pkgname"
+	# Generate the udev rules sample
+	cat > "$pkgdir/usr/share/doc/$pkgname/udev-rules.conf.example" <<EOF
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", GROUP="users", MODE="0660", SYMLINK="hxcfloppy", RUN="/sbin/modprobe -r ftdi_sio"
+EOF
 }
 
 pkgver()
