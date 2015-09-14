@@ -1,17 +1,20 @@
 # This builds the softwares needed to use hxc usb emulator
 # 
 # Maintainer: Michael Hauspie <mickeymtp@gmail.com>
-pkgname=hxcfloppyemulator
-pkgver=2.0.20.3
-pkgrel=2
+pkgname=hxcfloppyemulator-svn
+conflicts=('hxcfloppyemulator')
+provides=('hxcfloppyemulator')
+pkgver=2.1.1.0.r1339
+pkgrel=1
 epoch=
 pkgdesc="Software that drives the HxC Floppy USB emulator"
 arch=('any')
 url="http://hxc2001.com"
 license=('GPL')
+makedepends=('subversion')
 depends=('fltk>=1.3')
 install=$pkgname.install
-source=('svn://svn.code.sf.net/p/hxcfloppyemu/code/#revision=1100'
+source=('svn://svn.code.sf.net/p/hxcfloppyemu/code/'
     'http://hxc2001.com/download/floppy_drive_emulator/HxC_Floppy_Emulator_Software_User_Manual_ENG.pdf'
 )
 md5sums=('SKIP' 'c28fd6219d117b58640eeadcb8d148b8')
@@ -46,3 +49,9 @@ ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", GROUP="users", MODE="0660", S
 EOF
 }
 
+pkgver() {
+  cd "$srcdir/code"
+  local rev="$(svnversion)"
+  local ver="$(grep '#define STR_FILE_VERSION2' "$srcdir/code/HxCFloppyEmulator/HxCFloppyEmulator_software/trunk/sources/version.h" | awk '{print $3;}' | tr -d \\\" | sed 's/\s//')"
+  printf "%s.r%s" "${ver//[[:alpha::]]}" "${rev//[[:alpha:]]}"
+}
